@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Login</h2>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <a href="{{ url_for('google_login') }}" class="btn btn-outline-danger btn-lg w-100 mb-3">
+                        <i class="fab fa-google me-2"></i> Continue with Google
+                    </a>
+                    <div class="divider d-flex align-items-center my-4">
+                        <p class="text-center mx-3 mb-0">Or</p>
+                    </div>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.divider {
+    position: relative;
+    text-align: center;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.divider p {
+    color: #6c757d;
+    padding: 0 1rem;
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}

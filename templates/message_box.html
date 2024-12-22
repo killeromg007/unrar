@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            {% if current_user.is_authenticated and message_box.user_id == current_user.id %}
+                <div class="card mb-4 fade-in">
+                    <div class="card-header">
+                        <h2 class="mb-0">
+                            <i class="fas fa-inbox me-2"></i>
+                            Your Message Box
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="mb-3">
+                            <i class="fas fa-share-alt me-2"></i>
+                            Share these links:
+                        </h5>
+                        <div class="mb-4">
+                            <label class="form-label text-muted mb-2">View Link</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="{{ request.url }}" id="view-link" readonly>
+                                <button class="btn btn-outline-primary" type="button" onclick="copyToClipboard('view-link')">
+                                    <i class="fas fa-copy me-1"></i>
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label text-muted mb-2">Send Link</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="{{ url_for('send_message', link_id=link_id, _external=True) }}" id="send-link" readonly>
+                                <button class="btn btn-outline-primary" type="button" onclick="copyToClipboard('send-link')">
+                                    <i class="fas fa-copy me-1"></i>
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="messages-section fade-in" style="animation-delay: 0.1s;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>
+                            <i class="fas fa-envelope-open-text me-2"></i>
+                            Messages
+                        </h3>
+                        <span class="badge bg-primary rounded-pill">{{ messages|length }}</span>
+                    </div>
+                    
+                    {% if messages %}
+                        <div class="messages-container">
+                            {% for message in messages %}
+                                <div class="card message-card mb-3 fade-in" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+                                    <div class="card-body">
+                                        <p class="card-text mb-2">{{ message.content }}</p>
+                                        <small class="text-muted">
+                                            <i class="far fa-clock me-1"></i>
+                                            {{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                                        </small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info fade-in" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No messages yet. Share your send link with friends to receive messages!
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 fade-in">
+                    <div class="mb-4">
+                        <i class="fas fa-envelope-open-text fa-4x text-primary mb-3"></i>
+                        <h2 class="mb-3">Send an Anonymous Message</h2>
+                        <p class="lead text-muted mb-4">Share your thoughts anonymously with this message box!</p>
+                    </div>
+                    <a href="{{ url_for('send_message', link_id=link_id) }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Send a Message
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.messages-container {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.message-card {
+    transition: transform 0.2s ease;
+}
+
+.message-card:hover {
+    transform: translateX(5px);
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+</style>
+
+<script>
+function copyToClipboard(elementId) {
+    var copyText = document.getElementById(elementId);
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    
+    // Change button text and icon temporarily
+    var button = copyText.nextElementSibling;
+    var originalHTML = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+    button.classList.remove('btn-outline-primary');
+    button.classList.add('btn-success');
+    
+    setTimeout(function() {
+        button.innerHTML = originalHTML;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-primary');
+    }, 2000);
+}
+</script>
+{% endblock %}

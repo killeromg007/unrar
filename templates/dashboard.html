@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Your Message Boxes</h2>
+                <a href="{{ url_for('create_box') }}" class="btn btn-primary">Create New Box</a>
+            </div>
+
+            {% if message_boxes %}
+                {% for box in message_boxes %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Message Box #{{ loop.index }}</h5>
+                            <p class="card-text">Created: {{ box.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ url_for('view_box', link_id=box.link_id, _external=True) }}" readonly>
+                                <button class="btn btn-outline-secondary copy-btn" type="button" data-clipboard-text="{{ url_for('view_box', link_id=box.link_id, _external=True) }}">Copy Link</button>
+                            </div>
+                            <a href="{{ url_for('view_box', link_id=box.link_id) }}" class="btn btn-primary">View Messages</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    You haven't created any message boxes yet. Click the button above to create one!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        input.select();
+        document.execCommand('copy');
+        
+        const originalText = this.textContent;
+        this.textContent = 'Copied!';
+        setTimeout(() => {
+            this.textContent = originalText;
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}
